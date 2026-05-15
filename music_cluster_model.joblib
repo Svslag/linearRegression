@@ -1,0 +1,29 @@
+from pathlib import Path
+
+import joblib
+import pandas as pd
+from flask import Flask, render_template, request
+
+BASE_DIR = Path(__file__).resolve().parent
+MODEL_PATH = BASE_DIR / "music_cluster_model.joblib"
+SCALER_PATH = BASE_DIR / "scaler.joblib"
+FEATURES = ["daily_minutes", "rock_percent", "pop_percent", "hiphop_percent", "playlist_count"]
+
+app = Flask(__name__)
+model = joblib.load(MODEL_PATH)
+scaler = joblib.load(SCALER_PATH)
+
+@app.route("/", methods=["GET", "POST"])
+def index():
+    cluster = None
+
+    if request.method == "POST":
+        row = {feature: float(request.form[feature]) for feature in FEATURES}
+        data = pd.DataFrame([row])
+        scaled_data = scaler.transform(data)
+        cluster = model.predict(scaled_data)[0]
+
+    return render_template("index.html", features=FEATURES, cluster=cluster)
+
+if __name__ == "__main__":
+    app.run(debug=True)

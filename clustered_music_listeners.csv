@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Music Listener Segmentation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+<div class="container">
+    <h1>Music Listener Segmentation</h1>
+    <p class="subtitle">Unsupervised Learning: KMeans Clustering</p>
+
+    <form method="POST">
+        {% for feature in features %}
+            <input type="number" step="any" name="{{ feature }}" placeholder="{{ feature }}" required>
+        {% endfor %}
+        <button type="submit">Find Cluster</button>
+    </form>
+
+    {% if cluster is not none %}
+        <h2>Listener Cluster: {{ cluster }}</h2>
+    {% endif %}
+</div>
+</body>
+</html>
